@@ -1,62 +1,62 @@
-create procedure syn.usp_ImportFileCustomerSeasonal	--1: Нет комментария что выполняет данный скрипт.
+create procedure syn.usp_ImportFileCustomerSeasonal	--1: РќРµС‚ РєРѕРјРјРµРЅС‚Р°СЂРёСЏ С‡С‚Рѕ РІС‹РїРѕР»РЅСЏРµС‚ РґР°РЅРЅС‹Р№ СЃРєСЂРёРїС‚.
 	@Record_ID int
-AS --2: Операторы и системные функции указываются в нижнем регистре.
+AS --2: РћРїРµСЂР°С‚РѕСЂС‹ Рё СЃРёСЃС‚РµРјРЅС‹Рµ С„СѓРЅРєС†РёРё СѓРєР°Р·С‹РІР°СЋС‚СЃСЏ РІ РЅРёР¶РЅРµРј СЂРµРіРёСЃС‚СЂРµ.
 set nocount on
 begin
-	declare @RowCount int = (select count(*) from syn.SA_CustomerSeasonal)	--3: Правила наименования переменных. переменная @RowCount Row вместо Rows правильно: @RowsCount
-	declare @ErrorMessage varchar(max)	--4: Для объявления переменных declare используется один раз.  если не объявляем раннее объявленную переменную.
-		--5: Рекомендуется при объявлении типов не использовать длину поля max
--- Проверка на корректность загрузки
+	declare @RowCount int = (select count(*) from syn.SA_CustomerSeasonal)	--3: РџСЂР°РІРёР»Р° РЅР°РёРјРµРЅРѕРІР°РЅРёСЏ РїРµСЂРµРјРµРЅРЅС‹С…. РїРµСЂРµРјРµРЅРЅР°СЏ @RowCount Row РІРјРµСЃС‚Рѕ Rows РїСЂР°РІРёР»СЊРЅРѕ: @RowsCount
+	declare @ErrorMessage varchar(max)	--4: Р”Р»СЏ РѕР±СЉСЏРІР»РµРЅРёСЏ РїРµСЂРµРјРµРЅРЅС‹С… declare РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РѕРґРёРЅ СЂР°Р·.  РµСЃР»Рё РЅРµ РѕР±СЉСЏРІР»СЏРµРј СЂР°РЅРЅРµРµ РѕР±СЉСЏРІР»РµРЅРЅСѓСЋ РїРµСЂРµРјРµРЅРЅСѓСЋ.
+		--5: Р РµРєРѕРјРµРЅРґСѓРµС‚СЃСЏ РїСЂРё РѕР±СЉСЏРІР»РµРЅРёРё С‚РёРїРѕРІ РЅРµ РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊ РґР»РёРЅСѓ РїРѕР»СЏ max
+-- РџСЂРѕРІРµСЂРєР° РЅР° РєРѕСЂСЂРµРєС‚РЅРѕСЃС‚СЊ Р·Р°РіСЂСѓР·РєРё
 	if not exists (
-	select 1	--6: Содержимое exists оформляется с одним отступом.
-	from syn.ImportFile as f	--7: Алиасы. При наименовании алиаса использовать первые заглавные буквы КАЖДОГО слова. В случае, если алиас представляет собой системное слово, добавляем первую согласную букву после заглавной: imf вместо f
+	select 1	--6: РЎРѕРґРµСЂР¶РёРјРѕРµ exists РѕС„РѕСЂРјР»СЏРµС‚СЃСЏ СЃ РѕРґРЅРёРј РѕС‚СЃС‚СѓРїРѕРј.
+	from syn.ImportFile as f	--7: РђР»РёР°СЃС‹. РџСЂРё РЅР°РёРјРµРЅРѕРІР°РЅРёРё Р°Р»РёР°СЃР° РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊ РїРµСЂРІС‹Рµ Р·Р°РіР»Р°РІРЅС‹Рµ Р±СѓРєРІС‹ РљРђР–Р”РћР“Рћ СЃР»РѕРІР°. Р’ СЃР»СѓС‡Р°Рµ, РµСЃР»Рё Р°Р»РёР°СЃ РїСЂРµРґСЃС‚Р°РІР»СЏРµС‚ СЃРѕР±РѕР№ СЃРёСЃС‚РµРјРЅРѕРµ СЃР»РѕРІРѕ, РґРѕР±Р°РІР»СЏРµРј РїРµСЂРІСѓСЋ СЃРѕРіР»Р°СЃРЅСѓСЋ Р±СѓРєРІСѓ РїРѕСЃР»Рµ Р·Р°РіР»Р°РІРЅРѕР№: imf РІРјРµСЃС‚Рѕ f
 	where f.ID = @Record_ID		
 		and f.FlagLoaded = cast(1 as bit)
 	)
 		begin
-			set @ErrorMessage = 'Ошибка при загрузке файла, проверьте корректность данных'
+			set @ErrorMessage = 'РћС€РёР±РєР° РїСЂРё Р·Р°РіСЂСѓР·РєРµ С„Р°Р№Р»Р°, РїСЂРѕРІРµСЂСЊС‚Рµ РєРѕСЂСЂРµРєС‚РЅРѕСЃС‚СЊ РґР°РЅРЅС‹С…'
 
 			raiserror(@ErrorMessage, 3, 1)
 			return
 		end
 
-	--Чтение из слоя временных данных
+	--Р§С‚РµРЅРёРµ РёР· СЃР»РѕСЏ РІСЂРµРјРµРЅРЅС‹С… РґР°РЅРЅС‹С…
 	select
 		c.ID as ID_dbo_Customer
-		,cst.ID as ID_CustomerSystemType	--8: в алиасе не указанна схема. указывается, если объекты состоят в разных схемах.
+		,cst.ID as ID_CustomerSystemType	--8: РІ Р°Р»РёР°СЃРµ РЅРµ СѓРєР°Р·Р°РЅРЅР° СЃС…РµРјР°. СѓРєР°Р·С‹РІР°РµС‚СЃСЏ, РµСЃР»Рё РѕР±СЉРµРєС‚С‹ СЃРѕСЃС‚РѕСЏС‚ РІ СЂР°Р·РЅС‹С… СЃС…РµРјР°С….
 		,s.ID as ID_Season
 		,cast(cs.DateBegin as date) as DateBegin
 		,cast(cs.DateEnd as date) as DateEnd
 		,c_dist.ID as ID_dbo_CustomerDistributor
 		,cast(isnull(cs.FlagActive, 0) as bit) as FlagActive
 	into #CustomerSeasonal
-	from syn.SA_CustomerSeasonal cs	--9: пропущенно ключевое слово AS при присвоении Алиаса
-		join dbo.customer as c on c.UID_DS = cs.UID_DS_Customer	--10: Все виды join указываются явно.
+	from syn.SA_CustomerSeasonal cs	--9: РїСЂРѕРїСѓС‰РµРЅРЅРѕ РєР»СЋС‡РµРІРѕРµ СЃР»РѕРІРѕ AS РїСЂРё РїСЂРёСЃРІРѕРµРЅРёРё РђР»РёР°СЃР°
+		join dbo.customer as c on c.UID_DS = cs.UID_DS_Customer	--10: Р’СЃРµ РІРёРґС‹ join СѓРєР°Р·С‹РІР°СЋС‚СЃСЏ СЏРІРЅРѕ.
 			and c.ID_mapping_DataSource = 1 
 		join dbo.Season as s on s.Name = cs.Season
 		join dbo.Customer as c_dist on c_dist.UID_DS = cs.UID_DS_CustomerDistributor
 			and cd.ID_mapping_DataSource = 1
-		join syn.CustomerSystemType as cst on cs.CustomerSystemType = cst.Name --11: При соединении таблиц сперва после on указываем поле присоединяемой таблицы.
+		join syn.CustomerSystemType as cst on cs.CustomerSystemType = cst.Name --11: РџСЂРё СЃРѕРµРґРёРЅРµРЅРёРё С‚Р°Р±Р»РёС† СЃРїРµСЂРІР° РїРѕСЃР»Рµ on СѓРєР°Р·С‹РІР°РµРј РїРѕР»Рµ РїСЂРёСЃРѕРµРґРёРЅСЏРµРјРѕР№ С‚Р°Р±Р»РёС†С‹.
 	where try_cast(cs.DateBegin as date) is not null
 		and try_cast(cs.DateEnd as date) is not null
 		and try_cast(isnull(cs.FlagActive, 0) as bit) is not null
 
-	-- Определяем некорректные записи								12:Многострочные комментарии (/* */) используются для развёрнутых пояснений:Открывающая и закрывающая части находятся на отдельных строках.
-	-- Добавляем причину, по которой запись считается некорректной
+	-- РћРїСЂРµРґРµР»СЏРµРј РЅРµРєРѕСЂСЂРµРєС‚РЅС‹Рµ Р·Р°РїРёСЃРё								12:РњРЅРѕРіРѕСЃС‚СЂРѕС‡РЅС‹Рµ РєРѕРјРјРµРЅС‚Р°СЂРёРё (/* */) РёСЃРїРѕР»СЊР·СѓСЋС‚СЃСЏ РґР»СЏ СЂР°Р·РІС‘СЂРЅСѓС‚С‹С… РїРѕСЏСЃРЅРµРЅРёР№:РћС‚РєСЂС‹РІР°СЋС‰Р°СЏ Рё Р·Р°РєСЂС‹РІР°СЋС‰Р°СЏ С‡Р°СЃС‚Рё РЅР°С…РѕРґСЏС‚СЃСЏ РЅР° РѕС‚РґРµР»СЊРЅС‹С… СЃС‚СЂРѕРєР°С….
+	-- Р”РѕР±Р°РІР»СЏРµРј РїСЂРёС‡РёРЅСѓ, РїРѕ РєРѕС‚РѕСЂРѕР№ Р·Р°РїРёСЃСЊ СЃС‡РёС‚Р°РµС‚СЃСЏ РЅРµРєРѕСЂСЂРµРєС‚РЅРѕР№
 	select
 		cs.*
 		,case
-			when c.ID is null then 'UID клиента отсутствует в справочнике "Клиент"'
-			when c_dist.ID is null then 'UID дистрибьютора отсутствует в справочнике "Клиент"'
-			when s.ID is null then 'Сезон отсутствует в справочнике "Сезон"'
-			when cst.ID is null then 'Тип клиента отсутствует в справочнике "Тип клиента"'
-			when try_cast(cs.DateBegin as date) is null then 'Невозможно определить Дату начала'
-			when try_cast(cs.DateEnd as date) is null then 'Невозможно определить Дату окончания'
-			when try_cast(isnull(cs.FlagActive, 0) as bit) is null then 'Невозможно определить Активность'
+			when c.ID is null then 'UID РєР»РёРµРЅС‚Р° РѕС‚СЃСѓС‚СЃС‚РІСѓРµС‚ РІ СЃРїСЂР°РІРѕС‡РЅРёРєРµ "РљР»РёРµРЅС‚"'
+			when c_dist.ID is null then 'UID РґРёСЃС‚СЂРёР±СЊСЋС‚РѕСЂР° РѕС‚СЃСѓС‚СЃС‚РІСѓРµС‚ РІ СЃРїСЂР°РІРѕС‡РЅРёРєРµ "РљР»РёРµРЅС‚"'
+			when s.ID is null then 'РЎРµР·РѕРЅ РѕС‚СЃСѓС‚СЃС‚РІСѓРµС‚ РІ СЃРїСЂР°РІРѕС‡РЅРёРєРµ "РЎРµР·РѕРЅ"'
+			when cst.ID is null then 'РўРёРї РєР»РёРµРЅС‚Р° РѕС‚СЃСѓС‚СЃС‚РІСѓРµС‚ РІ СЃРїСЂР°РІРѕС‡РЅРёРєРµ "РўРёРї РєР»РёРµРЅС‚Р°"'
+			when try_cast(cs.DateBegin as date) is null then 'РќРµРІРѕР·РјРѕР¶РЅРѕ РѕРїСЂРµРґРµР»РёС‚СЊ Р”Р°С‚Сѓ РЅР°С‡Р°Р»Р°'
+			when try_cast(cs.DateEnd as date) is null then 'РќРµРІРѕР·РјРѕР¶РЅРѕ РѕРїСЂРµРґРµР»РёС‚СЊ Р”Р°С‚Сѓ РѕРєРѕРЅС‡Р°РЅРёСЏ'
+			when try_cast(isnull(cs.FlagActive, 0) as bit) is null then 'РќРµРІРѕР·РјРѕР¶РЅРѕ РѕРїСЂРµРґРµР»РёС‚СЊ РђРєС‚РёРІРЅРѕСЃС‚СЊ'
 		end as Reason
 	into #BadInsertedRows
 	from syn.SA_CustomerSeasonal as cs
-	left join dbo.Customer as c on c.UID_DS = cs.UID_DS_Customer	--13: Отсутствует отступ.
+	left join dbo.Customer as c on c.UID_DS = cs.UID_DS_Customer	--13: РћС‚СЃСѓС‚СЃС‚РІСѓРµС‚ РѕС‚СЃС‚СѓРї.
 		and c.ID_mapping_DataSource = 1
 	left join dbo.Customer as c_dist on c_dist.UID_DS = cs.UID_DS_CustomerDistributor and c_dist.ID_mapping_DataSource = 1
 	left join dbo.Season as s on s.Name = cs.Season
@@ -69,9 +69,9 @@ begin
 		or try_cast(cs.DateEnd as date) is null
 		or try_cast(isnull(cs.FlagActive, 0) as bit) is null
 
-	-- Обработка данных из файла
-	merge into syn.CustomerSeasonal as cs	--14: Перед названием таблицы, в которую осуществляется merge, into не указывается.
-	using (	--15: Стандартные алиасы: Использовать t для целевой таблицы.
+	-- РћР±СЂР°Р±РѕС‚РєР° РґР°РЅРЅС‹С… РёР· С„Р°Р№Р»Р°
+	merge into syn.CustomerSeasonal as cs	--14: РџРµСЂРµРґ РЅР°Р·РІР°РЅРёРµРј С‚Р°Р±Р»РёС†С‹, РІ РєРѕС‚РѕСЂСѓСЋ РѕСЃСѓС‰РµСЃС‚РІР»СЏРµС‚СЃСЏ merge, into РЅРµ СѓРєР°Р·С‹РІР°РµС‚СЃСЏ.
+	using (	--15: РЎС‚Р°РЅРґР°СЂС‚РЅС‹Рµ Р°Р»РёР°СЃС‹: РСЃРїРѕР»СЊР·РѕРІР°С‚СЊ t РґР»СЏ С†РµР»РµРІРѕР№ С‚Р°Р±Р»РёС†С‹.
 		select
 			cs_temp.ID_dbo_Customer
 			,cs_temp.ID_CustomerSystemType
@@ -85,7 +85,7 @@ begin
 		and s.ID_Season = cs.ID_Season
 		and s.DateBegin = cs.DateBegin
 	when matched
-		and t.ID_CustomerSystemType <> s.ID_CustomerSystemType then --16: then записывается на одной строке с when, независимо от наличия дополнительных условий.
+		and t.ID_CustomerSystemType <> s.ID_CustomerSystemType then --16: then Р·Р°РїРёСЃС‹РІР°РµС‚СЃСЏ РЅР° РѕРґРЅРѕР№ СЃС‚СЂРѕРєРµ СЃ when, РЅРµР·Р°РІРёСЃРёРјРѕ РѕС‚ РЅР°Р»РёС‡РёСЏ РґРѕРїРѕР»РЅРёС‚РµР»СЊРЅС‹С… СѓСЃР»РѕРІРёР№.
 		update
 		set
 			ID_CustomerSystemType = s.ID_CustomerSystemType
@@ -94,26 +94,26 @@ begin
 			,FlagActive = s.FlagActive
 	when not matched then
 		insert (ID_dbo_Customer, ID_CustomerSystemType, ID_Season, DateBegin, DateEnd, ID_dbo_CustomerDistributor, FlagActive)
-		values (s.ID_dbo_Customer, s.ID_CustomerSystemType, s.ID_Season, s.DateBegin, s.DateEnd, s.ID_dbo_CustomerDistributor, s.FlagActive) --17: В конце MERGE всегда ставится ; .
+		values (s.ID_dbo_Customer, s.ID_CustomerSystemType, s.ID_Season, s.DateBegin, s.DateEnd, s.ID_dbo_CustomerDistributor, s.FlagActive) --17: Р’ РєРѕРЅС†Рµ MERGE РІСЃРµРіРґР° СЃС‚Р°РІРёС‚СЃСЏ ; .
 
-	-- Информационное сообщение
+	-- РРЅС„РѕСЂРјР°С†РёРѕРЅРЅРѕРµ СЃРѕРѕР±С‰РµРЅРёРµ
 	begin
-		select @ErrorMessage = concat('Обработано строк: ', @RowCount)
+		select @ErrorMessage = concat('РћР±СЂР°Р±РѕС‚Р°РЅРѕ СЃС‚СЂРѕРє: ', @RowCount)
 
 		raiserror(@ErrorMessage, 1, 1)
 
-		-- Формирование таблицы для отчетности
+		-- Р¤РѕСЂРјРёСЂРѕРІР°РЅРёРµ С‚Р°Р±Р»РёС†С‹ РґР»СЏ РѕС‚С‡РµС‚РЅРѕСЃС‚Рё
 		select top 100
-			Season as 'Сезон'
-			,UID_DS_Customer as 'UID Клиента'
-			,Customer as 'Клиент'
-			,CustomerSystemType as 'Тип клиента'
-			,UID_DS_CustomerDistributor as 'UID Дистрибьютора'
-			,CustomerDistributor as 'Дистрибьютор'
-			,isnull(format(try_cast(DateBegin as date), 'dd.MM.yyyy', 'ru-RU'), DateBegin) as 'Дата начала'
-			,isnull(format(try_cast(DateEnd as date), 'dd.MM.yyyy', 'ru-RU'), DateEnd) as 'Дата окончания'
-			,FlagActive as 'Активность'
-			,Reason as 'Причина'
+			Season as 'РЎРµР·РѕРЅ'
+			,UID_DS_Customer as 'UID РљР»РёРµРЅС‚Р°'
+			,Customer as 'РљР»РёРµРЅС‚'
+			,CustomerSystemType as 'РўРёРї РєР»РёРµРЅС‚Р°'
+			,UID_DS_CustomerDistributor as 'UID Р”РёСЃС‚СЂРёР±СЊСЋС‚РѕСЂР°'
+			,CustomerDistributor as 'Р”РёСЃС‚СЂРёР±СЊСЋС‚РѕСЂ'
+			,isnull(format(try_cast(DateBegin as date), 'dd.MM.yyyy', 'ru-RU'), DateBegin) as 'Р”Р°С‚Р° РЅР°С‡Р°Р»Р°'
+			,isnull(format(try_cast(DateEnd as date), 'dd.MM.yyyy', 'ru-RU'), DateEnd) as 'Р”Р°С‚Р° РѕРєРѕРЅС‡Р°РЅРёСЏ'
+			,FlagActive as 'РђРєС‚РёРІРЅРѕСЃС‚СЊ'
+			,Reason as 'РџСЂРёС‡РёРЅР°'
 		from #BadInsertedRows
 
 		return
